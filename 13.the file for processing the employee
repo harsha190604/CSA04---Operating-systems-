@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Employee {
+    int empId;
+    char empName[50];
+    float empSalary;
+};
+
+void addEmployee(FILE *file) {
+    struct Employee emp;
+
+    printf("Enter employee ID: ");
+    scanf("%d", &emp.empId);
+    printf("Enter employee name: ");
+    scanf("%s", emp.empName);
+    printf("Enter employee salary: ");
+    scanf("%f", &emp.empSalary);
+
+    fseek(file, (emp.empId - 1) * sizeof(struct Employee), SEEK_SET);
+    fwrite(&emp, sizeof(struct Employee), 1, file);
+
+    printf("Employee added successfully!\n");
+}
+
+void displayEmployee(FILE *file) {
+    struct Employee emp;
+    int empId;
+
+    printf("Enter employee ID to display: ");
+    scanf("%d", &empId);
+
+    fseek(file, (empId - 1) * sizeof(struct Employee), SEEK_SET);
+    fread(&emp, sizeof(struct Employee), 1, file);
+
+    printf("Employee ID: %d\n", emp.empId);
+    printf("Employee Name: %s\n", emp.empName);
+    printf("Employee Salary: %.2f\n", emp.empSalary);
+}
+
+void updateEmployee(FILE *file) {
+    struct Employee emp;
+    int empId;
+
+    printf("Enter employee ID to update: ");
+    scanf("%d", &empId);
+
+    fseek(file, (empId - 1) * sizeof(struct Employee), SEEK_SET);
+    fread(&emp, sizeof(struct Employee), 1, file);
+
+    if (emp.empId == 0) {
+        printf("Employee with ID %d does not exist.\n", empId);
+        return;
+    }
+
+    printf("Enter new employee name: ");
+    scanf("%s", emp.empName);
+    printf("Enter new employee salary: ");
+    scanf("%f", &emp.empSalary);
+
+    fseek(file, (empId - 1) * sizeof(struct Employee), SEEK_SET);
+    fwrite(&emp, sizeof(struct Employee), 1, file);
+
+    printf("Employee updated successfully!\n");
+}
+
+int main() {
+    FILE *file = fopen("employee_data.dat", "r+");
+
+    if (file == NULL) {
+        file = fopen("employee_data.dat", "w+");
+    }
+
+    if (file == NULL) {
+        printf("Error opening the file.\n");
+        return 1;
+    }
+
+    int choice;
+
+    do {
+        printf("\nEmployee Database Menu:\n");
+        printf("1. Add Employee\n");
+        printf("2. Display Employee\n");
+        printf("3. Update Employee\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                addEmployee(file);
+                break;
+            case 2:
+                displayEmployee(file);
+                break;
+            case 3:
+                updateEmployee(file);
+                break;
+            case 4:
+                printf("Exiting program.\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 4);
+
+    fclose(file);
+
+    return 0;
+}

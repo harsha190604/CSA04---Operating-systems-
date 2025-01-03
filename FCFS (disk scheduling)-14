@@ -1,0 +1,24 @@
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+  int ReadyQueue[100],i,n,TotalHeadMov=0,initial;
+  printf("Enter the size of queue:\n");
+  scanf("%d",&n);
+  printf("Enter the elements of ready queue");
+  for(i=0;i<n;i++)
+  {
+  scanf("%d",&ReadyQueue[i]);
+  }
+  printf("enter the initial:");
+  
+  
+  scanf("%d",&initial);
+  for(i=0;i<n;i++)
+  {
+    TotalHeadMov=TotalHeadMov+abs(ReadyQueue[i]-initial);
+    initial=ReadyQueue[i];
+  }
+  printf("Total Head Movement=%d",TotalHeadMov);
+  return 0;
+}

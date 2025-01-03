@@ -1,0 +1,48 @@
+#include <stdio.h>
+
+#define MAX_FRAMES 3
+#define MAX_PAGES 8
+
+int main() {
+    int pageFrames[MAX_FRAMES];
+    int pageReference[MAX_PAGES] = {4, 1, 2, 4, 3, 2, 1, 5};
+    int pageFaults = 0;
+    int frameIndex = 0;
+
+    // Initialize page frames to -1 (indicating empty)
+    for (int i = 0; i < MAX_FRAMES; ++i) {
+        pageFrames[i] = -1;
+    }
+
+    // Simulate FIFO page replacement
+    for (int i = 0; i < MAX_PAGES; ++i) {
+        int currentPage = pageReference[i];
+        int pageHit = 0;
+
+        // Check if the page is already in a frame
+        for (int j = 0; j < MAX_FRAMES; ++j) {
+            if (pageFrames[j] == currentPage) {
+                pageHit = 1;
+                break;
+            }
+        }
+
+        if (!pageHit) {
+            // Page fault: replace the oldest page in the frame
+            pageFrames[frameIndex] = currentPage;
+            frameIndex = (frameIndex + 1) % MAX_FRAMES;
+            ++pageFaults;
+
+            // Display the state of page frames after a page fault
+            printf("Page Fault %d: ", pageFaults);
+            for (int j = 0; j < MAX_FRAMES; ++j) {
+                printf("%d ", pageFrames[j]);
+            }
+            printf("\n");
+        }
+    }
+
+    printf("Total Page Faults: %d\n", pageFaults);
+
+    return 0;
+}
