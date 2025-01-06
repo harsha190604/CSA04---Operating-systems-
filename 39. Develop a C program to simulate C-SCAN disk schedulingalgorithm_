@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void sort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void cscan(int requests[], int n, int head, int disk_size, int seek_rate) {
+    int total_movement = 0;
+    int index = 0;
+
+   
+    sort(requests, n);
+
+    
+    for (int i = 0; i < n; i++) {
+        if (requests[i] > head) {
+            index = i;
+            break;
+        }
+    }
+
+    printf("\nSeek Sequence:\n");
+
+    
+    for (int i = index; i < n; i++) {
+        printf("%d -> ", requests[i]);
+        total_movement += abs(requests[i] - head);
+        head = requests[i];
+    }
+
+    
+    printf("%d -> ", disk_size - 1);
+    total_movement += abs(disk_size - 1 - head);
+    head = 0; 
+
+    
+    printf("%d -> ", head);
+    total_movement += abs(head - (disk_size - 1));
+
+    
+    for (int i = 0; i < index; i++) {
+        printf("%d -> ", requests[i]);
+        total_movement += abs(requests[i] - head);
+        head = requests[i];
+    }
+
+    printf("END\n");
+
+   
+    int total_seek_time = total_movement * seek_rate;
+
+  
+    float average_seek_time = (float)total_seek_time / n;
+
+    printf("\nTotal Head Movement: %d cylinders\n", total_movement);
+    printf("Total Seek Time: %d ms\n", total_seek_time);
+    printf("Average Seek Time: %.2f ms\n", average_seek_time);
+}
+
+int main() {
+    int n, head, disk_size, seek_rate;
+
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &n);
+
+    int requests[n];
+    printf("Enter the disk requests: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &requests[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter the total disk size: ");
+    scanf("%d", &disk_size);
+
+    printf("Enter the seek rate (ms per cylinder): ");
+    scanf("%d", &seek_rate);
+
+    cscan(requests, n, head, disk_size, seek_rate);
+
+    return 0;
+}

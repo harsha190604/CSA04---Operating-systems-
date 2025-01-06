@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void sort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void scan(int requests[], int n, int head, int disk_size, int seek_rate) {
+    int total_movement = 0;
+    int index = 0;
+
+    // Sort the request array
+    sort(requests, n);
+
+    // Find the index of the first request greater than the head
+    for (int i = 0; i < n; i++) {
+        if (requests[i] > head) {
+            index = i;
+            break;
+        }
+    }
+
+    printf("\nSeek Sequence:\n");
+
+    // Process requests to the left of the head
+    for (int i = index - 1; i >= 0; i--) {
+        printf("%d -> ", requests[i]);
+        total_movement += abs(requests[i] - head);
+        head = requests[i];
+    }
+
+    // Move to the start of the disk
+    if (head != 0) {
+        printf("0 -> ");
+        total_movement += head;
+        head = 0;
+    }
+
+    // Process requests to the right of the head
+    for (int i = index; i < n; i++) {
+        printf("%d", requests[i]);
+        if (i < n - 1) {
+            printf(" -> ");
+        }
+        total_movement += abs(requests[i] - head);
+        head = requests[i];
+    }
+
+    printf("\n");
+
+    // Calculate total seek time
+    int total_seek_time = total_movement * seek_rate;
+
+    // Calculate average seek time
+    float average_seek_time = (float)total_seek_time / n;
+
+    printf("\nTotal Head Movement: %d cylinders\n", total_movement);
+    printf("Total Seek Time: %d ms\n", total_seek_time);
+    printf("Average Seek Time: %.2f ms\n", average_seek_time);
+}
+
+int main() {
+    int n, head, disk_size, seek_rate;
+
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &n);
+
+    int requests[n];
+    printf("Enter the disk requests: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &requests[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter the total disk size: ");
+    scanf("%d", &disk_size);
+
+    printf("Enter the seek rate (ms per cylinder): ");
+    scanf("%d", &seek_rate);
+
+    scan(requests, n, head, disk_size, seek_rate);
+
+    return 0;
+}
